@@ -939,6 +939,9 @@ async function readCloudChatStream(body, signal, onDelta, onTool) {
       state.abort = null; setBusy(false); if (!options.voice) el.input.focus();
     }
   }
+    function nearBottom() {
+    return el.conversation.scrollHeight - el.conversation.scrollTop - el.conversation.clientHeight < 160;
+  }
   function resizeInput() { el.input.style.height = 'auto'; el.input.style.height = `${Math.min(el.input.scrollHeight, 170)}px`; }
   function updateCharCount() { $('#charCount').textContent = `${el.input.value.length.toLocaleString('it-IT')} / 12000`; }
   function closeSidebar() { el.sidebar.classList.remove('open'); }
