@@ -47,7 +47,7 @@
   // ═══════════════════════════════════════════════════════════════
 // 🌐 CONFIGURAZIONE CLOUD (Cloudflare Worker → Groq)
 // ═══════════════════════════════════════════════════════════════
-const WORKER_URL = 'https://avora-assistant.nowii-core-879.workers.dev';
+const WORKER_URL = 'https://avora-proxy.nowii-core-879.workers.dev';
 const WORKER_MODEL = 'llama-3.1-8b-instant';
 
 const CLOUD_MODE = /github\.io$|netlify\.app$|vercel\.app$|pages\.dev$|gitlab\.io$|web\.app$|firebaseapp\.com$/.test(location.hostname)
