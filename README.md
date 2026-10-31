@@ -56,17 +56,7 @@ Avora's application code (server, interface, and integrations) is released under
   <img src="graphic2.png" width="49%" alt="Avora interface preview 2">
 </p>
 
----
-
-## Live Demo
-
-Try Avora directly in your browser:
-
-<p align="center">
-  <a href="https://nowii-core.github.io/avora-assistant/"><img src="https://img.shields.io/badge/Launch%20Avora-Live%20Demo-6C5CE7?style=for-the-badge" alt="Launch Avora live demo"></a>
-</p>
-
-> The live demo lets you explore the hosted interface. Running Avora locally with Ollama is required to use your own local AI model and local data storage.
+> **Live Demo:** [nowii-core.github.io/phishlens/](https://nowii-core.github.io/phishlens/)
 
 ---
 
