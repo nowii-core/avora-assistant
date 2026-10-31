@@ -132,7 +132,7 @@ async function cloudApi(path, options = {}) {
   if (path === '/api/tts') throw new Error('TTS non disponibile — uso la voce di sistema del browser.');
   throw new Error(`Endpoint ${path} non disponibile nella versione cloud.`);
 }
-  
+
   async function api(path, options = {}) {
     const response = await fetch(path, { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options });
     let data;
@@ -530,30 +530,119 @@ async function cloudApi(path, options = {}) {
     return explicit || youtube || sports || products || health || weather || travel || currency || aiCompare || current;
   }
 
-  async function readChatStream(body, signal, onDelta, onTool) {
-    const response = await fetch('/api/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal });
-    if (!(response.headers.get('Content-Type') || '').includes('ndjson')) {
-      let data = {}; try { data = await response.json(); } catch {}
-      const error = new Error(data.error || `Errore HTTP ${response.status}`); error.code = data.code || ''; throw error;
-    }
-    const reader = response.body.getReader(); const decoder = new TextDecoder(); let buffer = ''; let final = null;
-    const handle = line => {
-      if (!line.trim()) return; let event; try { event = JSON.parse(line); } catch { return; }
-      if (event.type === 'delta') onDelta(String(event.text || ''));
-      else if (event.type === 'tool') { if (onTool) onTool(event); }
-      else if (event.type === 'done') final = event;
-      else if (event.type === 'error') { const error = new Error(event.error || 'Richiesta non completata'); error.code = event.code || ''; throw error; }
-    };
-    for (;;) {
-      const { value, done } = await reader.read(); if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      let index; while ((index = buffer.indexOf('\n')) >= 0) { handle(buffer.slice(0, index)); buffer = buffer.slice(index + 1); }
-    }
-    buffer += decoder.decode(); handle(buffer);
-    if (!final) throw new Error('Connessione interrotta prima della fine della risposta.');
-    return final;
+async function readChatStream(body, signal, onDelta, onTool) {
+  if (CLOUD_MODE) return readCloudChatStream(body, signal, onDelta, onTool);
+  const response = await fetch('/api/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal });
+  if (!(response.headers.get('Content-Type') || '').includes('ndjson')) {
+    let data = {}; try { data = await response.json(); } catch {}
+    const error = new Error(data.error || `Errore HTTP ${response.status}`); error.code = data.code || ''; throw error;
   }
-  function nearBottom() { return el.conversation.scrollHeight - el.conversation.scrollTop - el.conversation.clientHeight < 160; }
+  const reader = response.body.getReader(); const decoder = new TextDecoder(); let buffer = ''; let final = null;
+  const handle = line => {
+    if (!line.trim()) return; let event; try { event = JSON.parse(line); } catch { return; }
+    if (event.type === 'delta') onDelta(String(event.text || ''));
+    else if (event.type === 'tool') { if (onTool) onTool(event); }
+    else if (event.type === 'done') final = event;
+    else if (event.type === 'error') { const error = new Error(event.error || 'Richiesta non completata'); error.code = event.code || ''; throw error; }
+  };
+  for (;;) {
+    const { value, done } = await reader.read(); if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let index; while ((index = buffer.indexOf('\n')) >= 0) { handle(buffer.slice(0, index)); buffer = buffer.slice(index + 1); }
+  }
+  buffer += decoder.decode(); handle(buffer);
+  if (!final) throw new Error('Connessione interrotta prima della fine della risposta.');
+  return final;
+}
+
+async function readCloudChatStream(body, signal, onDelta, onTool) {
+  if (!WORKER_URL || WORKER_URL.includes('TUONOME')) {
+    throw new Error('Configura WORKER_URL in app.js con l’URL del tuo Cloudflare Worker.');
+  }
+  if (Array.isArray(body.images) && body.images.length) {
+    throw new Error('L’analisi delle foto non è disponibile nella versione cloud. Rimuovi la foto e riprova.');
+  }
+
+  const store = loadCloudStore();
+  let convo = body.conversation_id ? store.conversations.find(c => c.id === body.conversation_id) : null;
+  const isNew = !convo;
+  if (!convo) {
+    convo = {
+      id: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+      title: 'Nuova conversazione',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+  }
+  const existingMessages = store.messages[convo.id] || [];
+
+  let systemPrompt = 'Sei Avora, un assistente AI utile, chiaro e cordiale. Rispondi sempre in italiano in modo naturale e conciso.';
+  if (body.persona_prompt) systemPrompt += '\n\n' + body.persona_prompt;
+  if (body.custom_instructions) systemPrompt += '\n\nIstruzioni personalizzate dall\'utente:\n' + body.custom_instructions;
+
+  const history = [
+    ...existingMessages.map(m => ({ role: m.role, content: m.content })),
+    { role: 'user', content: body.message }
+  ];
+  const messages = [{ role: 'system', content: systemPrompt }, ...history];
+
+  const response = await fetch(WORKER_URL, {
+    method: 'POST',
+    signal,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: WORKER_MODEL, messages, stream: true, temperature: 0.7 })
+  });
+
+  if (!response.ok) {
+    let errText = '';
+    try { errText = await response.text(); } catch {}
+    throw new Error(`Worker errore ${response.status}: ${errText.slice(0, 200) || 'verifica il deploy e il secret GROQ_API_KEY'}`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let fullText = '';
+  let usage = null;
+
+  const handleLine = (line) => {
+    if (!line.startsWith('data:')) return;
+    const payload = line.slice(5).trim();
+    if (!payload || payload === '[DONE]') return;
+    try {
+      const event = JSON.parse(payload);
+      const delta = event.choices && event.choices[0] && event.choices[0].delta && event.choices[0].delta.content;
+      if (delta) { fullText += delta; onDelta(delta); }
+      if (event.usage) usage = event.usage;
+    } catch {}
+  };
+
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let idx;
+    while ((idx = buffer.indexOf('\n')) >= 0) {
+      handleLine(buffer.slice(0, idx).trim());
+      buffer = buffer.slice(idx + 1);
+    }
+  }
+  handleLine(buffer.trim());
+
+  const userMsg = { id: 'm_' + Date.now() + '_u', role: 'user', content: body.message, created_at: new Date().toISOString() };
+  const assistantMsg = { id: 'm_' + Date.now() + '_a', role: 'assistant', content: fullText, created_at: new Date().toISOString(), feedback: null };
+  
+  if (isNew) store.conversations.unshift(convo);
+  store.messages[convo.id] = [...existingMessages, userMsg, assistantMsg];
+  if (!convo.title || convo.title === 'Nuova conversazione') {
+    convo.title = String(body.message).slice(0, 60).replace(/\s+/g, ' ').trim() || 'Nuova conversazione';
+  }
+  convo.updated_at = new Date().toISOString();
+  saveCloudStore(store);
+
+  return { conversation_id: convo.id, conversation: convo, assistant_message: assistantMsg, mode: 'cloud', metrics: usage ? { completion_tokens: usage.completion_tokens || 0 } : { completion_tokens: 0 } };
+}
+  
 
   // ---- Agent, personas, preview, context ----
   const AGENT_RE = /\b(grafic\w*|plot|disegna un grafico|esegui|eseguire|calcola|calcolo|simula\w*|csv|dataset|statistic\w*|media di|percentual\w*|ordina i numeri|script python|cerca sul web|ultime notizie)\b/i;

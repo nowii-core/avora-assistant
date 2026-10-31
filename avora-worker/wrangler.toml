@@ -1,0 +1,5 @@
+name = "avora-proxy"
+main = "worker.js"
+compatibility_date = "2025-07-20"
+
+# Nessuna chiave qui: i secret si impostano con `wrangler secret put`.
