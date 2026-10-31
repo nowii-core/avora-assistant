@@ -133,7 +133,8 @@ async function cloudApi(path, options = {}) {
   throw new Error(`Endpoint ${path} non disponibile nella versione cloud.`);
 }
 
-  async function api(path, options = {}) {
+   async function api(path, options = {}) {
+    if (CLOUD_MODE) return cloudApi(path, options); // <-- QUESTA ERA LA RIGA MANCANTE
     const response = await fetch(path, { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options });
     let data;
     try { data = await response.json(); } catch { data = {}; }
