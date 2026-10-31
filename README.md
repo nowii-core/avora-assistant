@@ -56,7 +56,7 @@ Avora's application code (server, interface, and integrations) is released under
   <img src="graphic2.png" width="49%" alt="Avora interface preview 2">
 </p>
 
-> **Live Demo:** [nowii-core.github.io/phishlens/](https://nowii-core.github.io/phishlens/)
+> **Live Demo:** [nowii-core.github.io/avora-assistant/](https://nowii-core.github.io/avora-assistant/)
 
 ---
 
