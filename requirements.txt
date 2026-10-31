@@ -1,0 +1,5 @@
+# PyTorch esegue il training del Transformer scritto in questo repository.
+# tokenizers fornisce solo il motore BPE: il vocabolario viene addestrato da zero.
+torch>=2.4.0
+tokenizers>=0.23.3
+numpy>=1.26.0

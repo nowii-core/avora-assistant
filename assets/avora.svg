@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title desc">
+  <title id="title">Avora</title>
+  <desc id="desc">Marchio Avora: stella a quattro punte con sfumatura viola</desc>
+  <defs>
+    <linearGradient id="avoraGrad" x1="12%" y1="0%" x2="88%" y2="100%">
+      <stop offset="0%" stop-color="#c4a8ff"/>
+      <stop offset="45%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#5b3fe0"/>
+    </linearGradient>
+    <linearGradient id="avoraShine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff" stop-opacity=".55"/>
+      <stop offset="55%" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path d="M12 1.500C12 7.500 16.500 12 22.500 12C16.500 12 12 16.500 12 22.500C12 16.500 7.500 12 1.500 12C7.500 12 12 7.500 12 1.500Z" fill="url(#avoraGrad)"/>
+  <path d="M12 1.500C12 7.500 16.500 12 22.500 12C16.500 12 12 16.500 12 22.500C12 16.500 7.500 12 1.500 12C7.500 12 12 7.500 12 1.500Z" fill="url(#avoraShine)"/>
+</svg>

@@ -1,0 +1,24 @@
+NAUTILUS AI — LABORATORIO DI TRAINING
+
+1. Inserisci testi UTF-8 autorizzati in data/corpus/.
+2. Opzionale: raccogli un piccolo corpus di prova con:
+   python scripts/fetch_wikipedia.py --lang it --pages 200
+3. Controlla il dataset:
+   python scripts/check_corpus.py
+4. Installa dipendenze:
+   python3 -m venv .venv
+   source .venv/bin/activate
+   python -m pip install -r requirements.txt
+5. Pre-training da zero (piccolo smoke test):
+   python scripts/train.py --steps 300 --batch-size 2 --block-size 128 --n-embd 64 --n-head 4 --n-layer 2 --device auto
+6. Migliora il pre-training se hai più dati e risorse:
+   python scripts/train.py --steps 3000 --batch-size 4 --block-size 256 --n-embd 128 --n-head 4 --n-layer 4 --device auto
+7. Addestra le istruzioni con esempi verificati in data/instructions/:
+   python scripts/finetune.py --init checkpoints/avora-pretrain.pt --data data/instructions/examples.jsonl --steps 500 --batch-size 2 --device auto
+8. Prova il modello:
+   python scripts/generate.py --checkpoint checkpoints/avora-instruct.pt
+9. Crea un report di valutazione da revisionare:
+   python scripts/evaluate.py --checkpoint checkpoints/avora-instruct.pt --prompts data/instructions/evaluation.example.jsonl
+10. Riavvia python3 run.py per caricare il checkpoint nell'interfaccia.
+
+ATTENZIONE: i dati dimostrativi inclusi testano solo la pipeline. Una piccola sessione di training non produce un modello paragonabile agli assistenti commerciali. Controlla sempre le licenze, separa i dati di test, e non interpretare una loss più bassa come prova di accuratezza.

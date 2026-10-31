@@ -1,0 +1,56 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+*.sqlite3
+*.db
+checkpoints/*.pt
+checkpoints/*.pth
+checkpoints/training-report.json
+.env
+
+# Generated training artifacts / user datasets
+checkpoints/tokenizer.json
+checkpoints/tokenizer.manifest.json
+checkpoints/*.json
+data/processed/*
+!data/processed/.gitkeep
+data/corpus/*
+!data/corpus/.gitkeep
+
+# Generated reports
+reports/
+
+# Local application preferences
+data/nautilus-settings.json
+
+# Local secrets and generated images (never include in source archives)
+data/image_provider.json
+data/image_provider_consent.json
+data/image_provider_consent.tmp
+data/image_provider.tmp
+data/generated_images/*
+!data/generated_images/.gitkeep
+
+# Local user uploads (never bundle personal attachments)
+data/uploads/*
+!data/uploads/.gitkeep
+
+# Images uploaded to the local Avora gallery (never commit personal files)
+data/gallery_uploads/*
+!data/gallery_uploads/.gitkeep
+
+# Local environments and secrets
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.DS_Store
+*.log
+.pytest_cache/
+.mypy_cache/
+.coverage

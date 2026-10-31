@@ -1,0 +1,2 @@
+/* Applies the saved theme before first paint to avoid a light flash. */
+try{var t=(JSON.parse(localStorage.getItem('clara-preferences')||'{}').theme)||'system';var d=t==='dark'||(t==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';var z=JSON.parse(localStorage.getItem('clara-preferences')||'{}').textSize;if(z)document.documentElement.dataset.textSize=z}catch(e){}

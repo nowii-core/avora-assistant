@@ -1,0 +1,3 @@
+# Voce neurale italiana naturale (online, senza chiave API)
+# Se non è installabile, su macOS viene usata la voce di sistema.
+edge-tts>=7.3.1,<8
