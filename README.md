@@ -2,6 +2,7 @@
   <h1><img src="assets/avora.svg" width="30" height="30" alt="Avora logo"> Avora</h1>
   <p><strong>A private AI assistant that runs on your computer.</strong></p>
   <p>Version 1.4.0 · nowii-core · Local Ollama · SQLite</p>
+  <p><a href="https://nowii-core.github.io/avora-assistant/"><strong>Explore the Live Demo →</strong></a></p>
 </div>
 
 <p align="center">
@@ -10,10 +11,13 @@
   <img src="https://img.shields.io/badge/AI%20Runtime-Ollama-111111?style=for-the-badge" alt="Ollama">
   <img src="https://img.shields.io/badge/Storage-SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
   <img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-000000?style=for-the-badge" alt="Platform support">
+  <a href="https://nowii-core.github.io/avora-assistant/"><img src="https://img.shields.io/badge/Live%20Demo-Open%20Avora-6C5CE7?style=for-the-badge" alt="Open the Avora live demo"></a>
 </p>
 
 <p align="center">
   <a href="#overview">Overview</a> |
+  <a href="#preview">Preview</a> |
+  <a href="#live-demo">Live Demo</a> |
   <a href="#key-features">Features</a> |
   <a href="#quick-start">Quick Start</a> |
   <a href="#model-selection">Models</a> |
@@ -42,6 +46,27 @@ Avora
 ```
 
 Avora's application code (server, interface, and integrations) is released under the MIT License. Language models, voices, and external services are provided by third parties and remain subject to their own licenses and terms.
+
+---
+
+## Preview
+
+<p align="center">
+  <img src="graphic1.png" width="49%" alt="Avora interface preview 1">
+  <img src="graphic2.png" width="49%" alt="Avora interface preview 2">
+</p>
+
+---
+
+## Live Demo
+
+Try Avora directly in your browser:
+
+<p align="center">
+  <a href="https://nowii-core.github.io/avora-assistant/"><img src="https://img.shields.io/badge/Launch%20Avora-Live%20Demo-6C5CE7?style=for-the-badge" alt="Launch Avora live demo"></a>
+</p>
+
+> The live demo lets you explore the hosted interface. Running Avora locally with Ollama is required to use your own local AI model and local data storage.
 
 ---
 
