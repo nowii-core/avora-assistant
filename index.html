@@ -8,11 +8,11 @@
   <meta name="color-scheme" content="light dark">
   <meta name="description" content="Avora: assistente AI privato che gira sul tuo computer. Chat, codice, immagini, voce e ricerca web.">
   <title>Avora</title>
-  <link rel="icon" type="image/svg+xml" href="/./avora.svg">
-  <script src="/./theme-init.js?v=1.4.0"></script>
-  <link rel="stylesheet" href="/./styles.css?v=1.4.0">
-  <script src="/./image-intent.js?v=1.4.0" defer></script>
-  <script src="/./app.js?v=1.4.0" defer></script>
+  <link rel="icon" type="image/svg+xml" href="avora.svg">
+  <script src="theme-init.js?v=1.4.0"></script>
+  <link rel="stylesheet" href="styles.css?v=1.4.0">
+  <script src="image-intent.js?v=1.4.0" defer></script>
+  <script src="app.js?v=1.4.0" defer></script>
 </head>
 <body>
   <div class="onboarding hidden" id="onboarding" role="dialog" aria-modal="true" aria-labelledby="obTitle">
@@ -20,7 +20,7 @@
     <div class="ob-shell">
       <div class="ob-steps" id="obDots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
       <section class="ob-step" data-ob="0">
-        <img class="ob-logo" src="/./avora.svg" alt="" width="76" height="76">
+        <img class="ob-logo" src="avora.svg" alt="" width="76" height="76">
         <h1 id="obTitle">Benvenuto in Avora</h1>
         <p class="ob-lead">L'assistente AI che lavora sul tuo computer. Scrive, programma, analizza documenti e foto, crea immagini e risponde a voce.</p>
         <ul class="ob-points">
@@ -78,7 +78,7 @@
     <aside class="sidebar" id="sidebar" aria-label="Menu principale">
       <div class="sidebar-top">
         <a class="brand" href="#" id="brandHome" aria-label="Avora, pagina iniziale">
-          <img src="/./avora.svg" alt="" class="brand-mark">
+          <img src="avora.svg" alt="" class="brand-mark">
           <span>Avora</span>
         </a>
         <button class="icon-button sidebar-collapse" id="collapseSidebar" title="Nascondi barra laterale (Ctrl/Cmd + B)" aria-label="Nascondi barra laterale" data-icon="panel"></button>
@@ -108,7 +108,7 @@
       <header class="topbar">
         <button class="icon-button sidebar-expand" id="expandSidebar" title="Mostra barra laterale (Ctrl/Cmd + B)" aria-label="Mostra barra laterale" data-icon="panel"></button>
         <button class="icon-button menu-toggle" id="openSidebar" aria-label="Apri menu" title="Apri menu" data-icon="menu"></button>
-        <div class="topbar-brand"><img src="/./avora.svg" alt="" class="topbar-mark"><span>Avora</span></div>
+        <div class="topbar-brand"><img src="avora.svg" alt="" class="topbar-mark"><span>Avora</span></div>
         <div class="topbar-actions">
           <button class="icon-button" id="renameCurrent" type="button" title="Rinomina conversazione" aria-label="Rinomina conversazione" data-icon="edit" disabled></button>
           <button class="icon-button" id="exportCurrent" type="button" title="Esporta conversazione" aria-label="Esporta conversazione" data-icon="download" disabled></button>
@@ -120,7 +120,7 @@
         <section class="welcome-screen" id="welcomeScreen">
           <div class="welcome-inner">
             <div class="welcome-aura" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div class="welcome-brand"><img src="/./avora.svg" alt="" class="welcome-mark"><span>Avora</span></div>
+            <div class="welcome-brand"><img src="avora.svg" alt="" class="welcome-mark"><span>Avora</span></div>
             <p class="welcome-hello" id="welcomeHello">Ciao</p>
             <h1>Come posso aiutarti oggi?</h1>
             <p class="welcome-description">Scrivi, programma, analizza documenti e foto, crea immagini. Tutto resta sul tuo computer.</p>
@@ -350,7 +350,7 @@
         <details class="training-details"><summary>Laboratorio sperimentale: Transformer da zero</summary><p class="section-description">La pipeline educativa resta disponibile separatamente. Un piccolo addestramento locale non produce un modello paragonabile ai grandi modelli.</p>
           <div class="command-field"><code>python3 -m pip install -r requirements.txt</code><button data-copy="python3 -m pip install -r requirements.txt" type="button">Copia</button></div>
           <div class="command-field"><code>AVORA_ENGINE=transformer python3 scripts/train.py --steps 3000 --device auto</code><button data-copy="AVORA_ENGINE=transformer python3 scripts/train.py --steps 3000 --device auto" type="button">Copia</button></div>
-          <a class="guide-link" href="/./training-guide.txt" target="_blank" rel="noreferrer">Leggi la guida <span data-icon="external-link"></span></a>
+          <a class="guide-link" href="training-guide.txt" target="_blank" rel="noreferrer">Leggi la guida <span data-icon="external-link"></span></a>
         </details>
       </section>
       <section class="settings-section hidden" data-panel="usage">
@@ -374,7 +374,7 @@
       <section class="settings-section hidden" data-panel="about">
         <h3>Informazioni su Avora</h3>
         <button class="button-secondary" id="replayOnboarding" type="button">Rivedi la presentazione iniziale</button>
-        <div class="about-brand"><img src="/./avora.svg" alt="" width="44" height="44"><div><strong>Avora</strong><small>Assistente AI privato · versione 1.4.0</small></div></div>
+        <div class="about-brand"><img src="avora.svg" alt="" width="44" height="44"><div><strong>Avora</strong><small>Assistente AI privato · versione 1.4.0</small></div></div>
         <p class="section-description">Avora è un'applicazione di assistenza AI che funziona interamente sul tuo computer: conversazioni, allegati e immagini restano in locale. Le uniche connessioni esterne sono quelle che attivi tu: ricerca web, voce naturale e generazione di immagini online.</p>
         <dl class="model-details">
           <div><dt>Esecuzione</dt><dd>Locale tramite Ollama</dd></div>
@@ -387,7 +387,7 @@
         <p class="field-help">Un modello locale può commettere errori: verifica le informazioni importanti, soprattutto in ambito medico, legale e finanziario.</p>
       </section>
     </div>
-    <div class="settings-footer"><img src="/./avora.svg" alt=""><span>Avora</span><span class="footer-version">v1.4.0 · Locale e privata</span></div>
+    <div class="settings-footer"><img src="avora.svg" alt=""><span>Avora</span><span class="footer-version">v1.4.0 · Locale e privata</span></div>
   </aside>
   <aside class="projects-panel hidden" id="projectsPanel" role="dialog" aria-modal="true" aria-labelledby="projectsTitle">
     <div class="settings-header"><div><p class="section-eyebrow">AVORA · PROGETTI</p><h2 id="projectsTitle">Progetti</h2><p class="feature-subtitle">Spazi di lavoro con istruzioni dedicate, salvati sul tuo computer.</p></div><button class="icon-button" id="closeProjects" type="button" aria-label="Chiudi progetti" data-icon="close"></button></div>
