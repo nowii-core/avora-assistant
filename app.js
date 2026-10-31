@@ -44,6 +44,95 @@
     renameCurrent: $('#renameCurrent'), exportCurrent: $('#exportCurrent'), displayName: $('#displayName'), profileName: $('#profileName'), profileAvatar: $('#profileAvatar'), enterToSend: $('#enterToSend'), compactMode: $('#compactMode'),
   };
 
+  // ═══════════════════════════════════════════════════════════════
+// 🌐 CONFIGURAZIONE CLOUD (Cloudflare Worker → Groq)
+// ═══════════════════════════════════════════════════════════════
+const WORKER_URL = 'https://avora-assistant.nowii-core-879.workers.dev';
+const WORKER_MODEL = 'llama-3.1-8b-instant';
+
+const CLOUD_MODE = /github\.io$|netlify\.app$|vercel\.app$|pages\.dev$|gitlab\.io$|web\.app$|firebaseapp\.com$/.test(location.hostname)
+                || location.protocol === 'file:';
+
+const CLOUD_STORE_KEY = 'avora-cloud-store-v1';
+function loadCloudStore() {
+  try { return JSON.parse(localStorage.getItem(CLOUD_STORE_KEY) || '{"conversations":[],"messages":{}}'); }
+  catch { return { conversations: [], messages: {} }; }
+}
+function saveCloudStore(store) {
+  try { localStorage.setItem(CLOUD_STORE_KEY, JSON.stringify(store)); }
+  catch (e) { console.warn('[Avora] localStorage pieno:', e); }
+}
+
+async function cloudApi(path, options = {}) {
+  const method = (options.method || 'GET').toUpperCase();
+  const store = loadCloudStore();
+  let body = {};
+  try { body = options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : {}; } catch {}
+
+  if (path === '/api/status') {
+    return { engine: 'cloud', model_name: WORKER_MODEL, model_loaded: true, ollama_running: true, auto_model: false, demo: false, available_models: [WORKER_MODEL], vision_model: '', vision_model_loaded: false };
+  }
+  if (path === '/api/conversations' && method === 'GET') {
+    return { conversations: store.conversations };
+  }
+  const m = path.match(/^\/api\/conversations\/([^/]+)$/);
+  if (m) {
+    const id = m[1];
+    const convo = store.conversations.find(c => c.id === id);
+    if (method === 'GET') {
+      if (!convo) throw new Error('Conversazione non trovata');
+      return { conversation: convo, messages: store.messages[id] || [] };
+    }
+    if (method === 'PATCH') {
+      if (convo && body.title) { convo.title = body.title; convo.updated_at = new Date().toISOString(); saveCloudStore(store); }
+      return { conversation: convo };
+    }
+    if (method === 'DELETE') {
+      store.conversations = store.conversations.filter(c => c.id !== id);
+      delete store.messages[id];
+      saveCloudStore(store);
+      return { ok: true };
+    }
+  }
+  const mTrunc = path.match(/^\/api\/conversations\/([^/]+)\/truncate$/);
+  if (mTrunc && method === 'POST') {
+    const id = mTrunc[1];
+    if (store.messages[id]) store.messages[id] = store.messages[id].slice(0, Number(body.keep) || 0);
+    saveCloudStore(store);
+    return { ok: true };
+  }
+  const mFb = path.match(/^\/api\/messages\/([^/]+)\/feedback$/);
+  if (mFb && method === 'POST') {
+    for (const cid in store.messages) {
+      const msg = store.messages[cid].find(x => x.id === mFb[1]);
+      if (msg) { msg.feedback = body.value || null; break; }
+    }
+    saveCloudStore(store);
+    return { ok: true };
+  }
+  if (path === '/api/usage') {
+    return { usage: { plan: 'free', plan_name: 'Free', tokens_used: 0, remaining_tokens: 300000, percent_used: 0, seconds_until_reset: 3600 } };
+  }
+  if (path === '/api/personas') {
+    return { personas: [{ id: 'general', label: 'Generale', description: 'Assistente versatile per ogni tipo di richiesta.' }] };
+  }
+  if (path === '/api/progress') {
+    return { progress: { phase: 'generating', detail: 'Generazione della risposta in corso…' } };
+  }
+  if (path === '/api/models/pull') {
+    if (method === 'GET') return { pull: { active: false, phase: 'done' } };
+    throw new Error('Download modelli non disponibili nella versione cloud.');
+  }
+  if (path === '/api/images') {
+    return { generator: { available: false, configured: false, local_model_installed: false, horde_enabled: true, reason: 'Non disponibile nella versione cloud.' }, gallery: [], images: [], uploads: [] };
+  }
+  if (path.startsWith('/api/images/')) throw new Error('Generazione immagini non disponibile nella versione cloud.');
+  if (path.startsWith('/api/settings/')) return { ok: true, configured: false };
+  if (path === '/api/search') throw new Error('Ricerca web non disponibile nella versione cloud.');
+  if (path === '/api/tts') throw new Error('TTS non disponibile — uso la voce di sistema del browser.');
+  throw new Error(`Endpoint ${path} non disponibile nella versione cloud.`);
+}
+  
   async function api(path, options = {}) {
     const response = await fetch(path, { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options });
     let data;
